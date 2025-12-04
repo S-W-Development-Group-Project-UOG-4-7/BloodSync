@@ -19,7 +19,7 @@
         </div>
 
         <ul class="hidden md:flex space-x-8 text-lg">
-            <li><a href="#" class="hover:text-red-600">Home</a></li>
+            <li><a href="home.php" class="hover:text-red-600">Home</a></li>
             <li><a href="#" class="hover:text-red-600">Find Donors</a></li>
             <li><a href="#" class="hover:text-red-600">About</a></li>
             <li><a href="#" class="hover:text-red-600">Contact</a></li>
