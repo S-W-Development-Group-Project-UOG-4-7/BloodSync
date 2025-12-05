@@ -1,0 +1,17 @@
+/* GLOBAL PAGE TRANSITION */
+.page-transition {
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+.page-transition.loaded {
+    opacity: 1;
+}
+
+/* CARD SLIDE-IN ANIMATION */
+@keyframes fadeInSlow {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.fade-in-slow {
+    animation: fadeInSlow 0.8s ease-out forwards;
+}

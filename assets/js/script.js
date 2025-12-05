@@ -27,41 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
     // ================================
     // LOGIN PAGE FEATURES
     // ================================
-
     const passwordField = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
     const emailField = document.getElementById("email");
     const emailError = document.getElementById("emailError");
 
-    if (passwordField || emailField) {
-        console.log("Login page JS active.");
-    }
-
-    // === Show / Hide Password ===
     if (passwordField && togglePassword) {
         togglePassword.addEventListener("click", function () {
-            const isHidden = passwordField.type === "password";
+            const hidden = passwordField.type === "password";
+            passwordField.type = hidden ? "text" : "password";
 
-            // Toggle password visibility
-            passwordField.type = isHidden ? "text" : "password";
-
-            if (isHidden) {
-                // SHOW password
-                this.classList.remove("ri-eye-line");
-                this.classList.add("ri-eye-off-line");
-                this.classList.add("text-red-600");
-                this.classList.remove("text-gray-500");
-            } else {
-                // HIDE password
-                this.classList.remove("ri-eye-off-line");
-                this.classList.add("ri-eye-line");
-                this.classList.remove("text-red-600");
-                this.classList.add("text-gray-500");
-            }
+            this.classList.toggle("ri-eye-line", !hidden);
+            this.classList.toggle("ri-eye-off-line", hidden);
+            this.classList.toggle("text-red-600", hidden);
+            this.classList.toggle("text-gray-500", !hidden);
         });
     }
 
-    // === Email Validation ===
     if (emailField && emailError) {
         emailField.addEventListener("input", () => {
             const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value);
@@ -69,12 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --------------------------
-    // REGISTER PAGE LOGIC
-    // --------------------------
-
+    // ================================
+    // REGISTER PAGE FEATURES
+    // ================================
     const regEmail = document.getElementById("regEmail");
     const regEmailError = document.getElementById("regEmailError");
+
     const contact = document.getElementById("contact");
     const contactError = document.getElementById("contactError");
 
@@ -86,7 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const passwordMismatch = document.getElementById("passwordMismatch");
 
-    // Email Validation
+    const strengthBar = document.getElementById("strengthBar");
+    const strengthText = document.getElementById("strengthText");
+
+    // Email validation
     if (regEmail && regEmailError) {
         regEmail.addEventListener("input", () => {
             const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail.value);
@@ -94,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Contact number validation (simple)
+    // Contact validation
     if (contact && contactError) {
         contact.addEventListener("input", () => {
             const valid = /^[0-9+\-()\s]{7,20}$/.test(contact.value);
@@ -102,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Password toggle (main password)
+    // Password toggle (register)
     if (regPassword && toggleRegPassword) {
         toggleRegPassword.addEventListener("click", function () {
             const hidden = regPassword.type === "password";
@@ -115,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Password toggle (confirm password)
+    // Confirm password toggle
     if (confirmPassword && toggleConfirmPassword) {
         toggleConfirmPassword.addEventListener("click", function () {
             const hidden = confirmPassword.type === "password";
@@ -124,15 +109,64 @@ document.addEventListener("DOMContentLoaded", () => {
             this.classList.toggle("ri-eye-line", !hidden);
             this.classList.toggle("ri-eye-off-line", hidden);
             this.classList.toggle("text-red-600", hidden);
-            this.classList.toggleDo;
+            this.classList.toggle("text-gray-500", !hidden);
         });
     }
 
-    // Real-time password match check
+    // ================================
+    // PASSWORD STRENGTH METER
+    // ================================
+    function evaluateStrength(password) {
+        let score = 0;
+
+        if (password.length >= 6) score++;       // length
+        if (password.length >= 10) score++;      // longer
+        if (/[A-Z]/.test(password)) score++;     // uppercase
+        if (/[0-9]/.test(password)) score++;     // digit
+        if (/[^A-Za-z0-9]/.test(password)) score++; // special char
+
+        return score;
+    }
+
+    if (regPassword && strengthBar && strengthText) {
+        regPassword.addEventListener("input", () => {
+            const pass = regPassword.value.trim();
+            const score = evaluateStrength(pass);
+
+            let width = "0%";
+            let color = "#dc2626"; // default red
+            let label = "";
+
+            if (pass.length === 0) {
+                width = "0%";
+                label = "";
+            } else if (score <= 1) {
+                width = "33%";
+                color = "#dc2626"; // weak - red
+                label = "Weak";
+            } else if (score <= 3) {
+                width = "66%";
+                color = "#f59e0b"; // medium - amber
+                label = "Medium";
+            } else {
+                width = "100%";
+                color = "#16a34a"; // strong - green
+                label = "Strong";
+            }
+
+            strengthBar.style.width = width;
+            strengthBar.style.backgroundColor = color;
+            strengthText.textContent = label;
+        });
+    }
+
+    // ================================
+    // PASSWORD MATCH CHECK
+    // ================================
     if (regPassword && confirmPassword && passwordMismatch) {
         function validateMatch() {
             const match = regPassword.value === confirmPassword.value;
-            passwordMismatch.classList.toggle("hidden", match);
+            passwordMismatch.classList.toggle("hidden", match || !confirmPassword.value);
         }
 
         regPassword.addEventListener("input", validateMatch);
